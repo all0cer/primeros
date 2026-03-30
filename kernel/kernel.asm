@@ -26,7 +26,7 @@ ret                    ; Retorna para quem chamou
 ConfigStack:
     mov ax, 9000h      ; Define o segmento da stack (0x9000)
     mov ss, ax         ; SS = 0x9000 (segmento da stack)
-    mov sp, FFFFh      ; SP = 0xFFFF (topo da stack, cresce para baixo)
+    mov sp, 0FFFFh      ; SP = 0xFFFF (topo da stack, cresce para baixo)
 ret                    ; Retorna
 
 ; -----------------------------
