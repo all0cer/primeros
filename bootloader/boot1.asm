@@ -9,7 +9,7 @@ call PrintAll
 
 call LoadingKernel
 
-jmp $
+jmp 0800h:0000h
 
 PrepHelloWorld:
    mov si, FirstPhrase
