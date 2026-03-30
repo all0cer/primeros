@@ -2,10 +2,16 @@ all: run
 
 BOOT_SRC = bootloader/boot1.asm
 BOOT_BIN = bootloader/bins/boot.bin
+BOOT_KERNEL_SRC = kernel/kernel.asm
+BOOT_KERNEL_BIN = kernel/bins/kernel.bin
 IMG = build/os.img
 
 $(BOOT_BIN): $(BOOT_SRC)
 	mkdir -p bootloader/bins
+	nasm -f bin $(BOOT_SRC) -o $(BOOT_BIN)
+
+$(BOOT_KERNEL_BIN): $(BOOT_KERNEL_SRC)
+	mkdir -p kernel/bins
 	nasm -f bin $(BOOT_SRC) -o $(BOOT_BIN)
 
 $(IMG): $(BOOT_BIN)
