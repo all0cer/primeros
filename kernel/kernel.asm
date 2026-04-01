@@ -21,9 +21,8 @@ OSmain:
     sti                 ; Reativa interrupções
 
     call ConfigSegment
-
     call textsetVideoMode
-
+    call BackgroundColor
     jmp ShowMessage
 
 
@@ -47,6 +46,17 @@ textsetVideoMode:
     mov BYTE [BackWidth], 80   ; Armazena largura da tela (80 colunas)
     mov BYTE [BackHeight], 25  ; Armazena altura da tela (25 linhas)
 ret                    ; Retorna
+
+BackgroundColor:
+   mov ah, 06h
+   mov al, 0
+   mov bh, 0001_1111b
+   mov ch, 0
+   mov cl, 0
+   mov dh, 5
+   mov dl, 80
+   int 10h
+ret
 
 MoveCursor:
     mov ah, 02h
