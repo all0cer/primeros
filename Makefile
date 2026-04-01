@@ -20,7 +20,12 @@ $(IMG): $(BOOT_BIN) $(BOOT_KERNEL_BIN)
 	@echo "Criando build com dd..."
 	mkdir -p build
 	dd if=/dev/zero of=$(IMG) bs=512 count=2880 2> /dev/null
+
+	# Bootloader (setor 1)
 	dd if=$(BOOT_BIN) of=$(IMG) conv=notrunc 2> /dev/null
+
+	# Kernel (setor 2)
+	dd if=$(BOOT_KERNEL_BIN) of=$(IMG) bs=512 seek=1 conv=notrunc 2> /dev/null
 
 run: $(IMG)
 	qemu-system-i386 -drive format=raw,file=$(IMG)
