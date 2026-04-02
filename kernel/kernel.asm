@@ -48,21 +48,21 @@ textsetVideoMode:
 ret                    ; Retorna
 
 BackgroundColor:
-   mov ah, 06h
-   mov al, 0
-   mov bh, 0001_1111b
-   mov ch, 0
-   mov cl, 0
-   mov dh, 5
-   mov dl, 80
-   int 10h
+   mov ah, 06h         ; Função BIOS: scroll up / limpar área da tela
+   mov al, 0           ; 0 = limpar completamente (clear screen)
+   mov bh, 0001_1111b  ; Atributo de cor (fundo azul + texto branco)
+   mov ch, 0           ; Linha inicial (topo)
+   mov cl, 0           ; Coluna inicial
+   mov dh, 5           ; Linha final (limita área)
+   mov dl, 80          ; Coluna final
+   int 10h             ; Executa limpeza/coloração da área
 ret
 
 MoveCursor:
-    mov ah, 02h
-    mov bh, [Pagination]
-    inc dl
-    int 10h
+    mov ah, 02h        ; Função BIOS: mover cursor
+    mov bh, [Pagination] ; Página de vídeo
+    inc dl             ; Move cursor uma coluna à direita
+    int 0x10           ; Aplica posição do cursor
 ret
 
 SetLineColumn:
@@ -71,29 +71,29 @@ SetLineColumn:
 ret
 
 ShowMessage:
-    mov ah, 0x0E
-        mov al, 'H'
-        int 0x10
-    call SetLineColumn
-    call MoveCursor
-    mov si, KernelMessage
-    call MakeString
-    jmp END
+    call SetLineColumn ; Define posição inicial do cursor
+    call MoveCursor    ; Move cursor para posição definida
+
+    mov si, KernelMessage ; SI aponta para string
+    call MakeString    ; Imprime string
+
+    jmp END            ; Loop final (trava execução)
 
 MakeString:
-    mov ah, 09h
-    mov bh, [Pagination]
-    mov bl, 40h
-    mov cx, 1
-    mov al, [si]
+    mov ah, 09h        ; Função BIOS: escrever caractere com atributo
+    mov bh, [Pagination] ; Página
+    mov bl, 40h        ; Atributo de cor
+    mov cx, 1          ; Quantidade de repetições
+    mov al, [si]       ; Caractere atual
+
     print:
-        int 10h
-        inc si
-        call MoveCursor
-        mov ah, 09h
-        mov al, [si]
-        cmp al, 0
-        jne print
+        int 10h            ; Imprime caractere com cor
+        inc si             ; Avança para próximo caractere
+        call MoveCursor    ; Move cursor manualmente
+        mov ah, 09h        ; Reconfigura função (BIOS pode alterar AH)
+        mov al, [si]       ; Próximo caractere
+        cmp al, 0          ; Verifica fim da string (null terminator)
+        jne print          ; Se não for fim, continua loop
 ret
 
 END:
