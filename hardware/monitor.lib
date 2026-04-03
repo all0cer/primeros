@@ -6,5 +6,44 @@
 %IFNDEF _MONITOR_LIB_
 %DEFINE _MONITOR_LIB_
 
+NameSystem db "PrimerOS", 0
+
+; -------------------------
+; WindowsConfig
+
+BlackWidth  dw 0000h
+BlackHeight dw 0000h
+BackColor   db 46
+Pagination  db 0
+CursorX     db 15
+CursorY     db 12
+State       db 0
+Key         db 0
+count       dw 0
+
+
+
+
+;----------------------------
+;Rotine library
+; Defirnir o modo de video e configurar posição padrão
+
+VGA.SetVideoMode:
+    mov ah, 00h
+    mov al, 13h
+    int 10h
+    mov ax, 320
+    mov WORD [BackWidth], ax
+    mov ax, 200
+    mov WORD [BackHeight], ax
+    call DrawPixelConfig
+ret
+
+; função de gravar pixels na tela
+DrawPixelConfig:
+    mov ah, 0Ch
+    mov al, [BackColor]
+    mov cx, 0
+    mov dx, 0
 
 %ENDIF
