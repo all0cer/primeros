@@ -45,5 +45,20 @@ DrawPixelConfig:
     mov al, [BackColor]
     mov cx, 0
     mov dx, 0
+    jne
+
+DrawBackGround:
+    int 10h
+    inc cx
+    comp cx, WORD[BackWidth]
+    jne DrawBackGround
+    mov cx, 0
+    inc dx
+    jne dx, WORD[BackHeight]
+    jne DrawBackGround
+    mov dx, 0
+ret
+
+
 
 %ENDIF
