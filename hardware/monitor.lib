@@ -3,16 +3,16 @@
 ; version 0.0.1
 ; ---------------------------------------------------
 
-%IFNDEF _MONITOR_LIB_
-%DEFINE _MONITOR_LIB_
+%IFNDEF __MONITOR_LIB__
+%DEFINE __MONITOR_LIB__
 
 NameSystem db "PrimerOS", 0
 
 ; -------------------------
 ; WindowsConfig
 
-BlackWidth  dw 0000h
-BlackHeight dw 0000h
+BackWidth  dw 0000h
+BackHeight dw 0000h
 BackColor   db 46
 Pagination  db 0
 CursorX     db 15
@@ -45,20 +45,47 @@ DrawPixelConfig:
     mov al, [BackColor]
     mov cx, 0
     mov dx, 0
-    jne
+ret
 
 DrawBackGround:
     int 10h
     inc cx
-    comp cx, WORD[BackWidth]
+    cmp cx, WORD [BackWidth]
     jne DrawBackGround
     mov cx, 0
     inc dx
-    jne dx, WORD[BackHeight]
+    cmp dx, WORD [BackHeight]
     jne DrawBackGround
     mov dx, 0
 ret
 
+MoveCursor:
+    mov ah, 02h        ; Função BIOS: mover cursor
+    mov bh, [Pagination] ; Página de vídeo
+    inc dl             ; Move cursor uma coluna à direita
+    int 0x10           ; Aplica posição do cursor
+ret
 
+
+MakeString:
+    mov ah, 09h        ; Função BIOS: escrever caractere com atributo
+    mov bh, [Pagination] ; Página
+    mov bl, 20h        ; Atributo de cor
+    mov cx, 1          ; Quantidade de repetições
+    mov al, [si]       ; Caractere atual
+
+    print:
+        int 10h            ; Imprime caractere com cor
+        inc si             ; Avança para próximo caractere
+        call MoveCursor    ; Move cursor manualmente
+        mov ah, 09h        ; Reconfigura função (BIOS pode alterar AH)
+        mov al, [si]       ; Próximo caractere
+        cmp al, 0          ; Verifica fim da string (null terminator)
+        jne print          ; Se não for fim, continua loop
+ret
+
+
+EffectInit:
+ret
 
 %ENDIF
